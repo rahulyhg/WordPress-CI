@@ -95,11 +95,23 @@ class Wordpress extends Model {
 	var $_allow_grace = true;
 	
 	/**
+	 * Config data from the wordpress.php config file
+	 *
+	 * @access  public
+	 * @type    array
+	 */
+	var $_config = null;
+	
+	/**
 	 * Constructor
 	 */
 	function Wordpress()
 	{
 		$this->CI =& get_instance();
+		
+		// Import the config settings
+		$this->CI->config->load('wordpress', true);
+		$this->_config = $this->CI->config->item('wordpress');
 	}
 
 // ----------------------------------------------------------------------------
@@ -316,7 +328,17 @@ class Wordpress extends Model {
 	 */
 	function _salt($scheme)
 	{
+		// Get the default key
+		$secret_key = 
 		
+		if ($scheme == 'logged_in')
+		{
+			
+		}
+		else
+		{
+			
+		}
 	}
 	
 	/**
