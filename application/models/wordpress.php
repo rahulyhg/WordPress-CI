@@ -385,10 +385,9 @@ class Wordpress extends Model {
 	 * @access  public
 	 * @param   string    the filter
 	 * @param   string    the value to filter
-	 * @param   string    the scheme
 	 * @return  string
 	 */
-	function _apply_filters($filter, $str, $scheme = null)
+	function _apply_filters($filter, $str)
 	{
 		return $str;
 	}
@@ -622,6 +621,7 @@ class Wordpress extends Model {
 		
 		// Build the cookie string
 		$cookie = $user->user_login.'|'.$expiration.'|'.$hash;
+		return $this->_apply_filters('auth_cookie', $cookie, $user->ID, $expiration, $scheme);
 	}
 	
 	

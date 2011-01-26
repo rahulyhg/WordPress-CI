@@ -16,5 +16,56 @@ This model is still under construction. Do not attempt to implement at this time
 
 h2. API
 
-Coming soon...
+h3. Configuration
+
+The following config settings are available for use:
+
+* *logged_in_key* - Should have the same value as <code>LOGGED_IN_KEY</code> in your wp-config.php file
+* *logged_in_salt* - Should have the same value as <code>LOGGED_IN_SALT</code> in your wp-config.php file
+* *table_prefix* - Should have the same value as <code>$table_prefix</code> in your wp-config.php file
+* *secret_key* - Provides the same function as <code>SECRET_KEY</code> in WP (if in doubt, don't use it).
+* *blog_id* - The blog_id value if using WP in multisite mode.
+
+h3. Initializing
+
+Same as any CodeIgniter model:
+
+    $this->load->model('wordpress');
+
+And then call functions as:
+    
+    $this->wordpress->function_name(...);
+
+h3. Functions
+
+This is a list of all public functions (not <code>_underscore</code> functions)
+
+h4. void set_table_prefix ( string $prefix )
+
+Override the table prefix value (provides the same function as the <code>table_prefix</code> config option.
+
+h4. mixed get_option ( string $option[, bool $test = false ])
+
+Get a site option (eg. site_url). If <code>$test</code> is set to <code>TRUE</code>, then this function will just return a bool representating whether or not the option exists in the database.
+
+h4. void set_option ( string $option, mixed $value )
+
+Set a site option (eg. site_url).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
