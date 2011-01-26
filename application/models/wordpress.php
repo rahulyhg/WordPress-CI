@@ -388,9 +388,59 @@ class Wordpress extends Model {
 	 * @param   string    the scheme
 	 * @return  string
 	 */
-	function _apply_filters($filter, $str, $scheme)
+	function _apply_filters($filter, $str, $scheme = null)
 	{
 		return $str;
+	}
+	
+	/**
+	 * A random number generator
+	 *
+	 * WP uses a big, ugly, complex generator, but seeing as "random"
+	 * values do not have to be reproducable, I am simply going to
+	 * use mt_rand.
+	 *
+	 * @access  public
+	 * @param   int       the start
+	 * @param   int       the end
+	 * @return  int
+	 */
+	function _rand($min, $max)
+	{
+		return mt_rand($min, $max);
+	}
+	
+	/**
+	 * Generates a password string
+	 *
+	 * @access  public
+	 * @param   int       the length
+	 * @param   bool      use special chars?
+	 * @param   bool      use extra special chars?
+	 * @return  string
+	 */
+	function _generate_password($length = 12, $special_chars = true, $extra_special_chars = false)
+	{
+		$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+		
+		if ($special_chars)
+		{
+			$chars .= '!@#$%^&*()';
+		}
+		
+		if ($extra_special_chars)
+		{
+			$chars .= '-_ []{}<>~`+=,.;:/?|';
+		}
+		
+		$password = '';
+		$char_count = count($chars);
+		for ($i = 0; $i < $length; $i++)
+		{
+			$password .= $chars[$this->_rand(0, $char_count - 1)];
+		}
+		
+		return $this->_apply_filters('random_password', $password);
 	}
 	
 	/**
