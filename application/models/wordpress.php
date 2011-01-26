@@ -87,6 +87,14 @@ class Wordpress extends Model {
 	var $_logged_in_cookie = false;
 	
 	/**
+	 * The default secret key
+	 *
+	 * @access  public
+	 * @type    string
+	 */
+	var $_default_secret_key = 'put your unique phrase here';
+	
+	/**
 	 * Allow a grace period for POST requests?
 	 *
 	 * @access  public
@@ -100,7 +108,13 @@ class Wordpress extends Model {
 	 * @access  public
 	 * @type    array
 	 */
-	var $_config = null;
+	var $_config = array(
+		'logged_in_key'  => 'put your unique phrase here',
+		'logged_in_salt' => 'put your unique phrase here',
+		'secret_key'     => 'put your unique phrase here',
+		'table_prefix'   => 'wp_',
+		'blog_id'        => 0
+	);
 	
 	/**
 	 * Constructor
@@ -111,7 +125,7 @@ class Wordpress extends Model {
 		
 		// Import the config settings
 		$this->CI->config->load('wordpress', true);
-		$this->_config = $this->CI->config->item('wordpress');
+		$this->_config = array_merge($this->_config, $this->CI->config->item('wordpress'));
 	}
 
 // ----------------------------------------------------------------------------
@@ -136,15 +150,24 @@ class Wordpress extends Model {
 	 *
 	 * @access  public
 	 * @param   string    the option
+	 * @param   bool      test only
 	 * @return  mixed
 	 */
-	function get_option($option)
+	function get_option($option, $test = false)
 	{
 		$this->CI->db->select('option_value');
 		$this->CI->db->from($this->_table_prefix.'options');
-		$this->CI->db->where('option_name', $option);
+		$this->CI->db->where(array(
+			'blog_id' => $this->_config['blog_id'],
+			'option_name' => $option
+		));
 		
 		$query = $this->CI->db->get();
+		
+		if ($test)
+		{
+			return (!! $query->num_rows());
+		}
 		
 		if ($query->num_rows())
 		{
@@ -152,6 +175,39 @@ class Wordpress extends Model {
 			return $row['option_value'];
 		}
 		return null;
+	}
+	
+	/**
+	 * Set an option
+	 *
+	 * @access  public
+	 * @param   string    the option
+	 * @param   mixed     the new value
+	 * @return  void
+	 */
+	function set_option($option, $value)
+	{
+		// It already exists, update it
+		if ($this->get_option($option, $this->_config['blog_id'], true))
+		{
+			$this->CI->db->where(array(
+				'blog_id' => $this->_config['blog_id'],
+				'option_name' => $option
+			));
+			$this->CI->db->update($this->_table_prefix.'options', array(
+				'option_value' => $value
+			));
+		}
+		// It doesn't exist, create it
+		else
+		{
+			$this->CI->db->insert($this->_table_prefix.'options', array(
+				'blog_id' => $this->_config['blog_id'],
+				'option_name' => $name,
+				'option_value' => $value,
+				'auto_load' => 'yes'
+			));
+		}
 	}
 	
 	/**
@@ -320,6 +376,24 @@ class Wordpress extends Model {
 // ----------------------------------------------------------------------------
 	
 	/**
+	 * A fake apply_filters clone
+	 *
+	 * Some way of doing this may be come up with at some point, but
+	 * for the time being, any filters in the WP install will break
+	 * functionality.
+	 *
+	 * @access  public
+	 * @param   string    the filter
+	 * @param   string    the value to filter
+	 * @param   string    the scheme
+	 * @return  string
+	 */
+	function _apply_filters($filter, $str, $scheme)
+	{
+		return $str;
+	}
+	
+	/**
 	 * Figures out the appropriate salt value for a hash
 	 *
 	 * @access  public
@@ -328,17 +402,44 @@ class Wordpress extends Model {
 	 */
 	function _salt($scheme)
 	{
-		// Get the default key
-		$secret_key = 
+		$C = $this->_config;
+		
+		// Get the default hashing key
+		$secret_key = '';
+		if ($C['secret_key'] != '' && $C['secret_key'] != $this->_default_secret_key)
+		{
+			$secret_key = $C['secret_key'];
+		}
 		
 		if ($scheme == 'logged_in')
 		{
+			// Override the default key
+			if ($C['logged_in_key'] != '' && $C['logged_in_key'] != $this->_default_secret_key)
+			{
+				$secret_key = $logged_in_key;
+			}
 			
+			// Get the salt value
+			if ($C['logged_in_salt'] != '' && $C['logged_in_salt'] != $this->_default_secret_key)
+			{
+				$salt = $C['logged_in_salt'];
+			}
+			else
+			{
+				$salt = $this->get_option('logged_in_salt');
+				if (empty($salt))
+				{
+					$salt = $this->_generate_password(64, true, true);
+					$this->set_option('logged_in_salt', $salt);
+				}
+			}
 		}
 		else
 		{
-			
+			$salt = hash_hmac('md5', $scheme, $secret_key);
 		}
+		
+		return $this->_apply_filters('salt', $secret_key.$salt, $scheme);
 	}
 	
 	/**
