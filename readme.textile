@@ -27,11 +27,8 @@ The following config settings are available for use:
 h2. Initializing
 
 Same as any CodeIgniter model:
-
 <pre><code>$this->load->model('wordpress');</code></pre>
-
 And then call functions as:
-    
 <pre><code>$this->wordpress->function_name(...);</code></pre>
 
 h2. Functions
