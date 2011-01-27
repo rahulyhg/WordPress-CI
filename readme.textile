@@ -48,10 +48,7 @@ Set a site option (eg. site_url).
 Read a post based on it's ID.
 
 *array get_posts ([ string $types ])*
-Get an array of all posts, or all posts in a category(s), eg. to get all posts of type 'page', you would use
-<pre><code>$this->wordpress->get_posts('page')</code></pre>
-and to get all posts of types 'page' or 'post', you would use
-<pre><code>$this->wordpress->get_posts('page|post');</code></pre>
+Get an array of all posts, or all posts in a category(s), eg. to get all posts of type 'page', you would use<pre><code>$this->wordpress->get_posts('page')</code></pre>and to get all posts of types 'page' or 'post', you would use<pre><code>$this->wordpress->get_posts('page|post');</code></pre>
 
 *object get_user ( int $id )*
 Get a user's info by their user ID.
