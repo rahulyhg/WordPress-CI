@@ -35,50 +35,37 @@ h2. Functions
 
 This is a list of all end use functions (not internal functions)
 
-h3. <code>void set_table_prefix ( string $prefix )</code>
-
+*void set_table_prefix ( string $prefix )*
 Override the table prefix value (provides the same function as the <code>table_prefix</code> config option.
 
-h3. mixed get_option ( string $option[, bool $test = false ])
-
+*mixed get_option ( string $option[, bool $test = false ])*
 Get a site option (eg. site_url). If <code>$test</code> is set to <code>TRUE</code>, then this function will just return a bool representating whether or not the option exists in the database.
 
-h3. void set_option ( string $option, mixed $value )
-
+*void set_option ( string $option, mixed $value )*
 Set a site option (eg. site_url).
 
-h3. object get_post ( int $id )
-
+*object get_post ( int $id )*
 Read a post based on it's ID.
 
-h3. array get_posts ([ string $types ])
-
+*array get_posts ([ string $types ])*
 Get an array of all posts, or all posts in a category(s), eg. to get all posts of type 'page', you would use
-
 <pre><code>$this->wordpress->get_posts('page')</code></pre>
-
 and to get all posts of types 'page' or 'post', you would use
-
 <pre><code>$this->wordpress->get_posts('page|post');</code></pre>
 
-h3. object get_user ( int $id )
-
+*object get_user ( int $id )*
 Get a user's info by their user ID.
 
-h3. array get_all_users ( void )
-
+*array get_all_users ( void )*
 Get an array of all users.
 
-h3. object get_current_user ( void )
-
+*object get_current_user ( void )*
 Get the currently logged in user's info.
 
-h3. bool set_current_user_by_id ( int $id )
-
+*bool set_current_user_by_id ( int $id )*
 Log in a user based on their user ID.
 
-h3. bool set_current_user_by_username ( string $username )
-
+*bool set_current_user_by_username ( string $username )*
 Log in a user based on their username.
 
 
