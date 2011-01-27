@@ -35,7 +35,7 @@ h2. Functions
 
 This is a list of all end use functions (not internal functions)
 
-h3. void set_table_prefix ( string $prefix )
+h3. <code>void set_table_prefix ( string $prefix )</code>
 
 Override the table prefix value (provides the same function as the <code>table_prefix</code> config option.
 
